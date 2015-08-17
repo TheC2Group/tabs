@@ -8,7 +8,7 @@
 
 var Tabs = (function ($) {
     'use strict';
-    
+
     var count = 0;
 
     var defaults = {
@@ -16,8 +16,7 @@ var Tabs = (function ($) {
         panel: '.panel',
         prefix: 'Tabs-',
         firstActive: 1,
-        mobileAccordion: false, 
-        breakpoint: 750
+        breakpoint: 0
     };
 
     var keys = {
@@ -95,6 +94,16 @@ var Tabs = (function ($) {
         $thisTab.focus();
     };
 
+    var activateAccordion = function () {
+        if (this.accordion === undefined) {
+            this.accordion = new Accordion(this.$el, {
+                allowMultiple: false,
+                prefix: this.opts.prefix
+            });
+        }
+        this.accordion.activate(0);
+    };
+
     var bindEvents = function () {
         var self = this;
 
@@ -112,24 +121,16 @@ var Tabs = (function ($) {
             panelKeyEvents.call(self, e, index);
         });
 
-        matchMedia(this.mobileMaxWidth).addListener(function (mql) {
-            if (mql.matches && self.opts.mobileAccordion) {
-                if (self.accordion === undefined) {
-                    self.accordion = new Accordion(self.$el, { 
-                        allowMultiple: false,
-                        prefix: self.opts.prefix 
-                    });
-                } 
-                self.accordion.contractAll();
-                self.accordion.activate(0);
-            }
-        });
+        if (this.desktopMql) {
 
-        matchMedia(this.desktopMinWidth).addListener(function (mql) {
-            if (mql.matches && self.opts.mobileAccordion) {
-                activate.call(self, 0);
-            }
-        });
+            this.desktopMql.addListener(function (mql) {
+                if (mql.matches) {
+                    activate.call(self, 0);
+                } else {
+                    activateAccordion.call(self);
+                }
+            });
+        }
     };
 
     var addAriaAttributes = function () {
@@ -177,19 +178,13 @@ var Tabs = (function ($) {
         this.opts = $.extend({}, defaults, options);
         this.$tab = this.$el.find(this.opts.target);
         this.$panel = this.$el.find(this.opts.panel);
-        this.firstActive = this.opts.firstActive - 1; // setting it to zero-based 
-        this.mobileMaxWidth = 'screen and (max-width: ' + (this.opts.breakpoint - 1) + 'px)';
-        this.desktopMinWidth = 'screen and (min-width: ' + (this.opts.breakpoint) + 'px)';
+        this.firstActive = this.opts.firstActive - 1; // setting it to zero-based
+        this.desktopMql = (this.opts.breakpoint > 0) ? matchMedia('screen and (min-width: ' + (this.opts.breakpoint) + 'px)') : null;
         addAriaAttributes.call(this);
         bindEvents.call(this);
 
-        if (this.opts.mobileAccordion && matchMedia(this.mobileMaxWidth).matches) {
-            this.accordion = new Accordion(this.$el, { 
-                allowMultiple: false,
-                prefix: this.opts.prefix
-            });
-            this.accordion.contractAll();
-            this.accordion.activate(0);
+        if (this.desktopMql && !this.desktopMql.matches) {
+            activateAccordion.call(this);
         }
     };
 
