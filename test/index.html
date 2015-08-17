@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Tab Panel Widget</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="stylesheet" href="../tabs.css">
+        <style>
+            body {
+                margin: 50px;
+                font-family: sans-serif;
+            }
+
+            .Wrap {
+                margin: 0 auto;
+                max-width: 1200px;
+            }
+
+            .Tabs .tab {
+                padding: 10px;
+                margin-right: 5px;
+                border-top: 1px solid black;
+                border-left: 1px solid black;
+                border-right: 1px solid black;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+                cursor: pointer;
+            }
+
+            .Tabs .tab[aria-selected="true"] {
+                background: #ccc;
+                color: #000;
+            }
+
+            .Tabs .tab:focus {
+                background: #bbb;
+            }
+
+            @media screen and (max-width: 749px) {
+
+                .Tabs {
+                    border-top: 1px solid #000;
+                }
+
+                .Tabs .item {
+                    background: #eee;
+                    border-bottom: 1px solid #000;
+                }
+
+                .Tabs .target {
+                    display: block;
+                    padding: 10px 20px;
+                    background: #ccc;
+                    color: #000;
+                    text-decoration: none;
+                    outline: 0;
+                    transition: background .3s;
+                    cursor: pointer;
+                }
+
+                .Tabs .target:focus {
+                    background: #bbb;
+                }
+
+                .Tabs .panel {
+                    padding: 15px 20px;
+                }
+            }
+
+            @media screen and (min-width: 750px) {
+
+                .Tabs .panel {
+                    padding: 10px 20px;
+                    background: #eee;
+                    border: 1px solid black;
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="Wrap">
+            <h3>Tabs Widget</h3>
+
+            <div class="Tabs" id="Example1">
+                <ul class="tablist" role="tablist">
+                    <li class="tab">Tab 1</li>
+                    <li class="tab">Tab 2</li>
+                    <li class="tab">Tab 3</li>
+                </ul>
+
+                <div class="item" data-status="disabled">
+                    <div class="target">Tab 1</div>
+                    <div class="panel">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nunc sapien, sodales ut molestie ac, porta nec enim. Integer sapien elit, auctor sed tortor vitae, posuere tincidunt purus. Donec porttitor sapien in elit efficitur, eu congue metus tempor. Curabitur eu ipsum sit amet metus maximus dapibus. Nullam pretium orci a turpis feugiat elementum. Duis pretium vel leo vehicula vestibulum. Quisque sed enim maximus, bibendum sem sit amet, interdum erat. Ut in purus sapien. Ut laoreet, metus nec suscipit rutrum, quam quam scelerisque nunc, ac aliquet nisi turpis ut risus. Proin bibendum rutrum tincidunt. Pellentesque vel posuere odio, non dictum risus. Donec nec feugiat justo, ut lobortis felis. Etiam eget aliquam ex.</p>
+                    </div>
+                </div>
+
+                <div class="item" data-status="disabled">
+                    <div class="target">Tab 2</div>
+                    <div class="panel">
+                        <p>Cras mattis feugiat faucibus. Maecenas in posuere purus, a vehicula purus. Vestibulum ut eleifend ipsum, non cursus metus. Vestibulum at purus justo. Morbi lobortis massa quis arcu malesuada, sed efficitur magna faucibus. Praesent elit sem, semper nec felis posuere, convallis mattis neque. Mauris vitae sem sit amet tellus commodo porttitor. In et rhoncus eros, sodales iaculis purus. Suspendisse feugiat neque ac purus tempus, non pellentesque est finibus. Phasellus vitae diam tristique lacus dapibus ornare.</p>
+                    </div>
+                </div>
+
+                <div class="item" data-status="disabled">
+                    <div class="target">Tab 3</div>
+                    <div class="panel">
+                        <p>Suspendisse ornare molestie mi non sollicitudin. Nullam volutpat eleifend convallis. Aliquam non sapien facilisis, placerat lorem viverra, molestie diam. Pellentesque a quam vel metus lacinia egestas. Nam sed turpis id ipsum ultrices dapibus. Proin vitae arcu sodales lacus luctus feugiat. Phasellus tempor, enim et cursus venenatis, ipsum lacus tempor elit, ac commodo ligula orci vel nibh. Vestibulum tristique leo a tellus molestie, vitae cursus enim cursus. Pellentesque in tempus neque, in malesuada massa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="js/jquery.js"></script>
+        <script src="js/accordion.js"></script>
+        <script src="../tabs.js"></script>
+        
+        <script>
+            new Tabs('#Example1');
+        </script>
+    </body>
+</html>
