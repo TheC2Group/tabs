@@ -1,7 +1,7 @@
 tabs
 =====
 
-Accessible tabs, where aria states are automatically added. Depends on jQuery and C2 Accordion widget.
+Accessible tabs, where aria states are automatically added. Depends on jQuery and possibly the C2 Accordion widget.
 
 Options
 -------
