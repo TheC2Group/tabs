@@ -1,12 +1,14 @@
 var Tabs = (function ($) {
     'use strict';
+    
+    var count = 0;
 
     var defaults = {
         target: '.tab',
         panel: '.panel',
         prefix: 'Tabs-',
-        firstActive: 0,
-        mobileAccordion: true, 
+        firstActive: 1,
+        mobileAccordion: false, 
         breakpoint: 750
     };
 
@@ -134,7 +136,7 @@ var Tabs = (function ($) {
                 'role': 'tab',
                 'tabindex': -1,
                 'aria-selected': false,
-                'id': self.opts.prefix + (i + 1)
+                'id': self.opts.prefix + self.count + '-' + (i + 1)
             });
         });
 
@@ -143,27 +145,31 @@ var Tabs = (function ($) {
                 'role': 'tabpanel',
                 'tabindex': -1,
                 'aria-hidden': true,
-                'aria-labelledby': self.opts.prefix + (i + 1)
+                'aria-labelledby': self.opts.prefix + self.count + '-' + (i + 1)
             });
         });
 
-        this.$tab.eq(this.opts.firstActive).attr({
+        this.$tab.eq(this.firstActive).attr({
             'tabindex': 0,
             'aria-selected': true
         });
 
-        this.$panel.eq(this.opts.firstActive).attr({
+        this.$panel.eq(this.firstActive).attr({
             'tabindex': 0,
             'aria-hidden': false
         });
     };
 
     var tabs = function (el, options) {
+        count += 1;
+        this.count = count;
+
         this.$el = $(el);
         this.$tablist = this.$el.find('.tablist');
         this.opts = $.extend({}, defaults, options);
         this.$tab = this.$el.find(this.opts.target);
         this.$panel = this.$el.find(this.opts.panel);
+        this.firstActive = this.opts.firstActive - 1; // setting it to zero-based 
         this.mobileMaxWidth = 'screen and (max-width: ' + (this.opts.breakpoint - 1) + 'px)';
         this.desktopMinWidth = 'screen and (min-width: ' + (this.opts.breakpoint) + 'px)';
         addAriaAttributes.call(this);

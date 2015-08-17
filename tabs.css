@@ -10,30 +10,6 @@
     cursor: pointer;
 }
 
-@media screen and (max-width: 749px) {
-        
-    .Tabs .tablist {
-        display: none;
-    }
-
-    .Tabs .item {
-        box-sizing: content-box;
-        overflow: hidden;
-    }
-
-    .Tabs .panel[aria-hidden="true"],
-    .Tabs .item[data-status="disabled"] .panel {
-        display: none;
-    }
-}
-
-@media screen and (min-width: 750px) {
-
-    .Tabs .target {
-        display: none;
-    }
-
-    .Tabs .panel[aria-hidden="true"] {
-        display: none;
-    }
+.Tabs .panel[aria-hidden="true"] {
+    display: none;
 }

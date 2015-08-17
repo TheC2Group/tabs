@@ -11,8 +11,8 @@ Options
 | target | string | '.tab' | refers to the class on the tabs |
 | panel | string | '.panel' | refers to the class on the tab panels |
 | prefix | string | 'Tabs-' | sets the prefix for the aria label |
-| firstActive | number | 0 | sets the initial tab that is open |
-| mobileAccordion | boolean | true | converts the tabs to an accordion widget at mobile size |
+| firstActive | number | 1 | sets the initial tab that is open |
+| mobileAccordion | boolean | false | converts the tabs to an accordion widget at mobile size |
 | breakpoint | number | 750 | miniumum breakpoint for desktop layout |
 
 API
