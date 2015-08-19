@@ -4,7 +4,8 @@
  * https://stash.c2mpg.com:8443/projects/C2/repos/tabs
  */
 
- /* exported Tabs */
+/* global Accordion */
+/* exported Tabs */
 
 var Tabs = (function ($) {
     'use strict';
