@@ -1,0 +1,23 @@
+{
+  "name": "c2-tabs",
+  "version": "1.0.0",
+  "description": "Accessible tabs, where aria states are automatically added.",
+  "main": "tabs.js",
+  "scripts": {
+    "standalone": "browserify tabs.js --outfile standalone/tabs.js --standalone Tabs --exclude jquery",
+    "dist": "uglifyjs standalone/tabs.js --output standalone/tabs.min.js --comments",
+    "build": "npm run standalone && npm run dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:TheC2Group/tabs.git"
+  },
+  "keywords": [
+    "tabs"
+  ],
+  "author": "The C2 Group",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "^2.1.4"
+  }
+}
