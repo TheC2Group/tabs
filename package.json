@@ -1,6 +1,6 @@
 {
   "name": "c2-tabs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Accessible tabs, where aria states are automatically added.",
   "main": "tabs.js",
   "scripts": {
