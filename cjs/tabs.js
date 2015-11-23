@@ -1,15 +1,6 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Tabs = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (global){
-/*!
- * Tabs
- * https://github.com/TheC2Group/tabs
- * @version 1.0.0
- * @license MIT (c) The C2 Group (c2experience.com)
- */
-
 'use strict';
 
-var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
+var $ = require('jquery');
 
 var count = 0;
 
@@ -27,7 +18,7 @@ var keys = {
     down: 40
 };
 
-var activatePreviousTarget = function (index) {
+var activatePreviousTarget = function activatePreviousTarget(index) {
     var previous = index - 1;
     if (previous < 0) {
         previous = this.$tab.length - 1;
@@ -35,7 +26,7 @@ var activatePreviousTarget = function (index) {
     activate.call(this, previous);
 };
 
-var activateNextTarget = function (index) {
+var activateNextTarget = function activateNextTarget(index) {
     var next = index + 1;
     if (next >= this.$tab.length) {
         next = 0;
@@ -43,7 +34,7 @@ var activateNextTarget = function (index) {
     activate.call(this, next);
 };
 
-var panelKeyEvents = function (e, index) {
+var panelKeyEvents = function panelKeyEvents(e, index) {
     var self = this;
 
     if (e.ctrlKey && e.which === keys.up) {
@@ -51,7 +42,7 @@ var panelKeyEvents = function (e, index) {
     }
 };
 
-var tabKeyEvents = function (e, index) {
+var tabKeyEvents = function tabKeyEvents(e, index) {
 
     if (e.which === keys.left || e.which === keys.up) {
         e.preventDefault();
@@ -66,7 +57,7 @@ var tabKeyEvents = function (e, index) {
     }
 };
 
-var activate = function (index) {
+var activate = function activate(index) {
     var $thisTab = this.$tab.eq(index);
     var id = $thisTab.attr('id');
     var $thisPanel = this.$panel.filter('[aria-labelledby="' + id + '"]');
@@ -95,7 +86,7 @@ var activate = function (index) {
     $thisTab.focus();
 };
 
-var bindEvents = function () {
+var bindEvents = function bindEvents() {
     var self = this;
 
     this.$tab.click(function () {
@@ -113,7 +104,7 @@ var bindEvents = function () {
     });
 };
 
-var addAriaAttributes = function () {
+var addAriaAttributes = function addAriaAttributes() {
     var self = this;
 
     if (!this.$tablist.attr('role')) {
@@ -149,7 +140,7 @@ var addAriaAttributes = function () {
     });
 };
 
-var Tabs = function (el, options) {
+var Tabs = function Tabs(el, options) {
     count += 1;
     this.count = count;
 
@@ -166,7 +157,3 @@ var Tabs = function (el, options) {
 Tabs.prototype.activate = activate;
 
 module.exports = Tabs;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[1])(1)
-});

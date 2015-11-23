@@ -1,13 +1,6 @@
-/*!
- * Tabs
- * https://github.com/TheC2Group/tabs
- * @version 1.0.1
- * @license MIT (c) The C2 Group (c2experience.com)
- */
-
 'use strict';
 
-var $ = require('jquery');
+import * as $ from 'jquery';
 
 var count = 0;
 
@@ -163,4 +156,4 @@ var Tabs = function (el, options) {
 
 Tabs.prototype.activate = activate;
 
-module.exports = Tabs;
+export default Tabs;

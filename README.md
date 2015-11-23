@@ -14,14 +14,14 @@ $ npm install c2-tabs
 ```
 
 ```js
-var Accordion = require('c2-tabs');
+var Tabs = require('c2-tabs');
 ```
 
 ### Browser Global
 
 ```html
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="standalone/tabs.js"></script>
+<script src="iife/tabs.js"></script>
 ```
 
 
