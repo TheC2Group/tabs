@@ -1,18 +1,18 @@
 /*!
  * c2-tabs
  * https://github.com/TheC2Group/tabs
- * @version 1.1.0
+ * @version 2.0.0
  * @license MIT (c) The C2 Group (c2experience.com)
  */
-var Tabs = (function ($) { 'use strict';
+var Tabs = (function ($,eventHandler) { 'use strict';
 
     var count = 0;
 
     var defaults = {
-        target: '.tab',
+        tablist: '.tablist',
+        tab: '.tab',
         panel: '.panel',
-        prefix: 'Tabs-',
-        firstActive: 1
+        prefix: 'Tabs-'
     };
 
     var keys = {
@@ -22,125 +22,101 @@ var Tabs = (function ($) { 'use strict';
         down: 40
     };
 
-    var activatePreviousTarget = function activatePreviousTarget(index) {
-        var previous = index - 1;
+    var activatePrevious = function activatePrevious() {
+        var previous = this.index - 1;
         if (previous < 0) {
-            previous = this.$tab.length - 1;
+            previous = this.len - 1;
         }
         activate.call(this, previous);
     };
 
-    var activateNextTarget = function activateNextTarget(index) {
-        var next = index + 1;
-        if (next >= this.$tab.length) {
+    var activateNext = function activateNext() {
+        var next = this.index + 1;
+        if (next >= this.len) {
             next = 0;
         }
         activate.call(this, next);
     };
 
-    var panelKeyEvents = function panelKeyEvents(e, index) {
-        var self = this;
-
-        if (e.ctrlKey && e.which === keys.up) {
-            self.$tab.eq(index).focus();
-        }
-    };
-
-    var tabKeyEvents = function tabKeyEvents(e, index) {
-
+    var keyEvents = function keyEvents(e, index) {
         if (e.which === keys.left || e.which === keys.up) {
             e.preventDefault();
-            activatePreviousTarget.call(this, index);
+            activatePrevious.call(this, index);
             return;
         }
-
         if (e.which === keys.right || e.which === keys.down) {
             e.preventDefault();
-            activateNextTarget.call(this, index);
+            activateNext.call(this, index);
             return;
         }
     };
 
     var activate = function activate(index) {
-        var $thisTab = this.$tab.eq(index);
-        var id = $thisTab.attr('id');
-        var $thisPanel = this.$panel.filter('[aria-labelledby="' + id + '"]');
-        if ($thisTab.attr('aria-selected') === true) return;
+        if (index === this.index) return;
+        var previous = this.index;
+        this.index = index;
 
-        this.$tab.attr({
+        this.$tabs.eq(previous).attr({
             'aria-selected': false,
             'tabindex': -1
         });
 
-        this.$panel.attr({
+        this.$panels.eq(previous).attr({
             'aria-hidden': true,
             'tabindex': -1
         });
 
-        $thisTab.attr({
+        this.$tabs.eq(index).attr({
             'aria-selected': true,
             'tabindex': 0
-        });
+        })[0].focus();
 
-        $thisPanel.attr({
+        this.$panels.eq(index).attr({
             'aria-hidden': false,
             'tabindex': 0
         });
 
-        $thisTab.focus();
+        this.emit('update', index);
     };
 
     var bindEvents = function bindEvents() {
-        var self = this;
+        var _this = this;
 
-        this.$tab.click(function () {
-            activate.call(self, $(this).index());
+        this.$tabs.on('click', function (e) {
+            activate.call(_this, _this.$tabs.index(e.currentTarget));
         });
-
-        this.$tab.keydown(function (e) {
-            tabKeyEvents.call(self, e, $(this).index());
+        this.$tabs.on('keydown', function (e) {
+            keyEvents.call(_this, e);
         });
-
-        this.$panel.keydown(function (e) {
-            var id = $(this).attr('aria-labelledby');
-            var index = $('#' + id).index();
-            panelKeyEvents.call(self, e, index);
+        this.$panels.on('keydown', function (e) {
+            if (!e.ctrlKey) return;
+            keyEvents.call(_this, e);
         });
     };
 
     var addAriaAttributes = function addAriaAttributes() {
-        var self = this;
+        var _this2 = this;
 
         if (!this.$tablist.attr('role')) {
-            this.$el.attr('role', 'tablist');
+            this.$tablist.attr('role', 'tablist');
         }
 
-        this.$tab.each(function (i) {
-            $(this).attr({
+        this.$tabs.each(function (i, tab) {
+            $(tab).attr({
                 'role': 'tab',
-                'tabindex': -1,
-                'aria-selected': false,
-                'id': self.opts.prefix + self.count + '-' + (i + 1)
+                'tabindex': i === _this2.index ? 0 : -1,
+                'aria-selected': i === _this2.index ? true : false,
+                'id': _this2.opts.prefix + _this2.count + '-' + (i + 1)
             });
         });
 
-        this.$panel.each(function (i) {
-            $(this).attr({
+        this.$panels.each(function (i, panel) {
+            $(panel).attr({
                 'role': 'tabpanel',
-                'tabindex': -1,
-                'aria-hidden': true,
-                'aria-labelledby': self.opts.prefix + self.count + '-' + (i + 1)
+                'tabindex': i === _this2.index ? 0 : -1,
+                'aria-hidden': i === _this2.index ? false : true,
+                'aria-labelledby': _this2.opts.prefix + _this2.count + '-' + (i + 1)
             });
-        });
-
-        this.$tab.eq(this.firstActive).attr({
-            'tabindex': 0,
-            'aria-selected': true
-        });
-
-        this.$panel.eq(this.firstActive).attr({
-            'tabindex': 0,
-            'aria-hidden': false
         });
     };
 
@@ -148,18 +124,26 @@ var Tabs = (function ($) { 'use strict';
         count += 1;
         this.count = count;
 
-        this.$el = $(el);
-        this.$tablist = this.$el.find('.tablist');
         this.opts = $.extend({}, defaults, options);
-        this.$tab = this.$el.find(this.opts.target);
-        this.$panel = this.$el.find(this.opts.panel);
-        this.firstActive = this.opts.firstActive - 1; // setting it to zero-based
+
+        this.$el = $(el);
+        this.$tablist = this.$el.find(this.opts.tablist);
+        this.$tabs = this.$el.find(this.opts.tab);
+        this.$panels = this.$el.find(this.opts.panel);
+
+        this.len = this.$tabs.length;
+        this.index = 0;
+
         addAriaAttributes.call(this);
         bindEvents.call(this);
     };
 
+    eventHandler(Tabs);
+
     Tabs.prototype.activate = activate;
+    Tabs.prototype.activateNext = activateNext;
+    Tabs.prototype.activatePrevious = activatePrevious;
 
     return Tabs;
 
-})(jQuery);
+})(jQuery,eventHandler);

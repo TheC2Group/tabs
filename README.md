@@ -30,10 +30,10 @@ Options
 
 | Option | Type | Default Value | Info |
 | ------ | ---- | ------------- | ---- |
-| target | string | '.tab' | refers to the class on the tabs |
-| panel | string | '.panel' | refers to the class on the tab panels |
+| tablist | string | '.tablist' | refers to the selector on the tablist |
+| target | string | '.tab' | refers to the selector on the tabs |
+| panel | string | '.panel' | refers to the selector on the tab panels |
 | prefix | string | 'Tabs-' | sets the prefix for the aria label |
-| firstActive | number | 1 | sets the initial tab that is open |
 
 
 API
@@ -42,15 +42,14 @@ API
 ```js
 var tabs = new Tabs('.Tabs');
 
-tabs.activate(0);    // activates tab with a specific index
+tabs.on('update', i => {
+    console.log('index', i); // index 0, index 1, index 0
+});
 
+tabs.activate(0); // activates tab with a specific index
+tabs.activateNext();
+tabs.activatePrevious();
 ```
-
-
-Browser Compatibility
----------------------
-
-Requires matchMedia polyfill for IE9 and below.
 
 
 Accessibility

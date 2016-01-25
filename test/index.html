@@ -75,10 +75,14 @@
         </div>
 
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="event-handler.js"></script>
         <script src="../iife/tabs.js"></script>
 
         <script>
             var basicTabs = new Tabs('#Example1');
+            basicTabs.on('update', function (i) {
+                console.log(i);
+            });
         </script>
     </body>
 </html>

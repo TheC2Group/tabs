@@ -1,14 +1,15 @@
 'use strict';
 
 import * as $ from 'jquery';
+import * as eventHandler from 'c2-event-handler';
 
 var count = 0;
 
 var defaults = {
-    target: '.tab',
+    tablist: '.tablist',
+    tab: '.tab',
     panel: '.panel',
-    prefix: 'Tabs-',
-    firstActive: 1
+    prefix: 'Tabs-'
 };
 
 var keys = {
@@ -18,125 +19,97 @@ var keys = {
     down: 40
 };
 
-var activatePreviousTarget = function (index) {
-    var previous = index - 1;
+var activatePrevious = function () {
+    let previous = this.index - 1;
     if (previous < 0) {
-        previous = this.$tab.length - 1;
+        previous = this.len - 1;
     }
     activate.call(this, previous);
 };
 
-var activateNextTarget = function (index) {
-    var next = index + 1;
-    if (next >= this.$tab.length) {
+var activateNext = function () {
+    let next = this.index + 1;
+    if (next >= this.len) {
         next = 0;
     }
     activate.call(this, next);
 };
 
-var panelKeyEvents = function (e, index) {
-    var self = this;
-
-    if (e.ctrlKey && e.which === keys.up) {
-        self.$tab.eq(index).focus();
-    }
-};
-
-var tabKeyEvents = function (e, index) {
-
+var keyEvents = function (e, index) {
     if (e.which === keys.left || e.which === keys.up) {
         e.preventDefault();
-        activatePreviousTarget.call(this, index);
+        activatePrevious.call(this, index);
         return;
     }
-
     if (e.which === keys.right || e.which === keys.down) {
         e.preventDefault();
-        activateNextTarget.call(this, index);
+        activateNext.call(this, index);
         return;
     }
 };
 
 var activate = function (index) {
-    var $thisTab = this.$tab.eq(index);
-    var id = $thisTab.attr('id');
-    var $thisPanel = this.$panel.filter('[aria-labelledby="' + id + '"]');
-    if ($thisTab.attr('aria-selected') === true) return;
+    if (index === this.index) return;
+    const previous = this.index;
+    this.index = index;
 
-    this.$tab.attr({
+    this.$tabs.eq(previous).attr({
         'aria-selected': false,
         'tabindex': -1
     });
 
-    this.$panel.attr({
+    this.$panels.eq(previous).attr({
         'aria-hidden': true,
         'tabindex': -1
     });
 
-    $thisTab.attr({
+    this.$tabs.eq(index).attr({
         'aria-selected': true,
         'tabindex': 0
-    });
+    })[0].focus();
 
-    $thisPanel.attr({
+    this.$panels.eq(index).attr({
         'aria-hidden': false,
         'tabindex': 0
     });
 
-    $thisTab.focus();
+    this.emit('update', index);
 };
 
 var bindEvents = function () {
-    var self = this;
-
-    this.$tab.click(function () {
-        activate.call(self, $(this).index());
+    this.$tabs.on('click', e => {
+        activate.call(this, this.$tabs.index(e.currentTarget));
     });
-
-    this.$tab.keydown(function (e) {
-        tabKeyEvents.call(self, e, $(this).index());
+    this.$tabs.on('keydown', e => {
+        keyEvents.call(this, e);
     });
-
-    this.$panel.keydown(function (e) {
-        var id = $(this).attr('aria-labelledby');
-        var index = $('#' + id).index();
-        panelKeyEvents.call(self, e, index);
+    this.$panels.on('keydown', e => {
+        if (!e.ctrlKey) return;
+        keyEvents.call(this, e);
     });
 };
 
 var addAriaAttributes = function () {
-    var self = this;
-
     if (!this.$tablist.attr('role')) {
-        this.$el.attr('role', 'tablist');
+        this.$tablist.attr('role', 'tablist');
     }
 
-    this.$tab.each(function (i) {
-        $(this).attr({
+    this.$tabs.each((i, tab) => {
+        $(tab).attr({
             'role': 'tab',
-            'tabindex': -1,
-            'aria-selected': false,
-            'id': self.opts.prefix + self.count + '-' + (i + 1)
+            'tabindex': (i === this.index) ? 0 : -1,
+            'aria-selected': (i === this.index) ? true : false,
+            'id': this.opts.prefix + this.count + '-' + (i + 1)
         });
     });
 
-    this.$panel.each(function (i) {
-        $(this).attr({
+    this.$panels.each((i, panel) => {
+        $(panel).attr({
             'role': 'tabpanel',
-            'tabindex': -1,
-            'aria-hidden': true,
-            'aria-labelledby': self.opts.prefix + self.count + '-' + (i + 1)
+            'tabindex': (i === this.index) ? 0 : -1,
+            'aria-hidden': (i === this.index) ? false : true,
+            'aria-labelledby': this.opts.prefix + this.count + '-' + (i + 1)
         });
-    });
-
-    this.$tab.eq(this.firstActive).attr({
-        'tabindex': 0,
-        'aria-selected': true
-    });
-
-    this.$panel.eq(this.firstActive).attr({
-        'tabindex': 0,
-        'aria-hidden': false
     });
 };
 
@@ -144,16 +117,24 @@ var Tabs = function (el, options) {
     count += 1;
     this.count = count;
 
-    this.$el = $(el);
-    this.$tablist = this.$el.find('.tablist');
     this.opts = $.extend({}, defaults, options);
-    this.$tab = this.$el.find(this.opts.target);
-    this.$panel = this.$el.find(this.opts.panel);
-    this.firstActive = this.opts.firstActive - 1; // setting it to zero-based
+
+    this.$el = $(el);
+    this.$tablist = this.$el.find(this.opts.tablist);
+    this.$tabs = this.$el.find(this.opts.tab);
+    this.$panels = this.$el.find(this.opts.panel);
+
+    this.len = this.$tabs.length;
+    this.index = 0;
+
     addAriaAttributes.call(this);
     bindEvents.call(this);
 };
 
+eventHandler(Tabs);
+
 Tabs.prototype.activate = activate;
+Tabs.prototype.activateNext = activateNext;
+Tabs.prototype.activatePrevious = activatePrevious;
 
 export default Tabs;
