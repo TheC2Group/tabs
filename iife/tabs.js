@@ -12,7 +12,8 @@ var Tabs = (function ($,eventHandler) { 'use strict';
         tablist: '.tablist',
         tab: '.tab',
         panel: '.panel',
-        prefix: 'Tabs-'
+        prefix: 'Tabs-',
+        hashEnabled: false
     };
 
     var keys = {
@@ -92,6 +93,11 @@ var Tabs = (function ($,eventHandler) { 'use strict';
             if (!e.ctrlKey) return;
             keyEvents.call(_this, e);
         });
+        if (this.opts.hashEnabled) {
+            $(window).on('hashchange', function () {
+                checkHash.call(_this);
+            });
+        }
     };
 
     var addAriaAttributes = function addAriaAttributes() {
@@ -120,6 +126,21 @@ var Tabs = (function ($,eventHandler) { 'use strict';
         });
     };
 
+    var checkHash = function checkHash() {
+        var _this2 = this;
+
+        if (document.location.hash) {
+            // find tab with that hash
+            var hashKey = document.location.hash.split('#')[1];
+            var $selectedTab = this.$tabs.filter('[data-hash="'+hashKey+'"]');
+
+            // activate tab with that hash
+            if ($selectedTab.length > 0) {
+                activate.call(_this2, $selectedTab.index());
+            }
+        }
+    };
+
     var Tabs = function Tabs(el, options) {
         count += 1;
         this.count = count;
@@ -136,6 +157,9 @@ var Tabs = (function ($,eventHandler) { 'use strict';
 
         addAriaAttributes.call(this);
         bindEvents.call(this);
+        if (this.opts.hashEnabled) {
+            checkHash.call(this);
+        }
     };
 
     eventHandler(Tabs);

@@ -74,6 +74,30 @@
             </div>
         </div>
 
+        <div class="Wrap">
+            <h3>Tabs Widget - with hashes</h3>
+
+            <div class="Tabs" id="Example2">
+                <ul class="tablist" role="tablist">
+                    <li class="tab" data-hash="Tab1">Tab 1</li>
+                    <li class="tab" data-hash="Tab2">Tab 2</li>
+                    <li class="tab" data-hash="Tab3">Tab 3</li>
+                </ul>
+
+                <div class="panel">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nunc sapien, sodales ut molestie ac, porta nec enim. Integer sapien elit, auctor sed tortor vitae, posuere tincidunt purus. Donec porttitor sapien in elit efficitur, eu congue metus tempor. Curabitur eu ipsum sit amet metus maximus dapibus. Nullam pretium orci a turpis feugiat elementum. Duis pretium vel leo vehicula vestibulum. Quisque sed enim maximus, bibendum sem sit amet, interdum erat. Ut in purus sapien. Ut laoreet, metus nec suscipit rutrum, quam quam scelerisque nunc, ac aliquet nisi turpis ut risus. Proin bibendum rutrum tincidunt. Pellentesque vel posuere odio, non dictum risus. Donec nec feugiat justo, ut lobortis felis. Etiam eget aliquam ex.</p>
+                </div>
+
+                <div class="panel">
+                    <p>Cras mattis feugiat faucibus. Maecenas in posuere purus, a vehicula purus. Vestibulum ut eleifend ipsum, non cursus metus. Vestibulum at purus justo. Morbi lobortis massa quis arcu malesuada, sed efficitur magna faucibus. Praesent elit sem, semper nec felis posuere, convallis mattis neque. Mauris vitae sem sit amet tellus commodo porttitor. In et rhoncus eros, sodales iaculis purus. Suspendisse feugiat neque ac purus tempus, non pellentesque est finibus. Phasellus vitae diam tristique lacus dapibus ornare.</p>
+                </div>
+
+                <div class="panel">
+                    <p>Suspendisse ornare molestie mi non sollicitudin. Nullam volutpat eleifend convallis. Aliquam non sapien facilisis, placerat lorem viverra, molestie diam. Pellentesque a quam vel metus lacinia egestas. Nam sed turpis id ipsum ultrices dapibus. Proin vitae arcu sodales lacus luctus feugiat. Phasellus tempor, enim et cursus venenatis, ipsum lacus tempor elit, ac commodo ligula orci vel nibh. Vestibulum tristique leo a tellus molestie, vitae cursus enim cursus. Pellentesque in tempus neque, in malesuada massa.</p>
+                </div>
+            </div>
+        </div>
+
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
         <script src="event-handler.js"></script>
         <script src="../iife/tabs.js"></script>
@@ -82,6 +106,9 @@
             var basicTabs = new Tabs('#Example1');
             basicTabs.on('update', function (i) {
                 console.log(i);
+            });
+            var hashTabs = new Tabs('#Example2', {
+                hashEnabled: true
             });
         </script>
     </body>

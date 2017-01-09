@@ -34,6 +34,7 @@ Options
 | target | string | '.tab' | refers to the selector on the tabs |
 | panel | string | '.panel' | refers to the selector on the tab panels |
 | prefix | string | 'Tabs-' | sets the prefix for the aria label |
+| hashEnabled | boolean | false | activates tabs based on URL hash (also requires 'data-hash' attribute on each tab) |
 
 
 API
