@@ -103,21 +103,35 @@ var addAriaAttributes = function () {
     }
 
     this.$tabs.each((i, tab) => {
+		var tabId = $(tab).attr('id');
+		
         $(tab).attr({
             'role': 'tab',
             'tabindex': (i === this.index) ? 0 : -1,
             'aria-selected': (i === this.index) ? true : false,
-            'id': this.opts.prefix + this.count + '-' + (i + 1)
         });
+		
+		if (!tabId) {
+			$(tab).attr({
+				'id': this.opts.prefix + this.count + '-' + (i + 1)
+			});
+		}
     });
 
     this.$panels.each((i, panel) => {
+		var labelledBy = $(panel).attr('aria-labelledby');
+		
         $(panel).attr({
             'role': 'tabpanel',
             'tabindex': (i === this.index) ? 0 : -1,
             'aria-hidden': (i === this.index) ? false : true,
-            'aria-labelledby': this.opts.prefix + this.count + '-' + (i + 1)
         });
+		
+		if (!labelledBy) {
+			$(panel).attr({
+				'aria-labelledby': this.opts.prefix + this.count + '-' + (i + 1)
+			});
+		}
     });
 };
 

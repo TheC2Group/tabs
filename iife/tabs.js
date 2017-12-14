@@ -108,21 +108,35 @@ var Tabs = (function ($,eventHandler) { 'use strict';
         }
 
         this.$tabs.each(function (i, tab) {
+			var tabId = $(tab).attr('id');
+			
             $(tab).attr({
                 'role': 'tab',
                 'tabindex': i === _this2.index ? 0 : -1,
                 'aria-selected': i === _this2.index ? true : false,
-                'id': _this2.opts.prefix + _this2.count + '-' + (i + 1)
             });
+			
+			if (!tabId) {
+				$(tab).attr({
+					'id': _this2.opts.prefix + _this2.count + '-' + (i + 1)
+				});
+			}
         });
 
         this.$panels.each(function (i, panel) {
+			var labelledBy = $(panel).attr('aria-labelledby');
+			
             $(panel).attr({
                 'role': 'tabpanel',
                 'tabindex': i === _this2.index ? 0 : -1,
                 'aria-hidden': i === _this2.index ? false : true,
-                'aria-labelledby': _this2.opts.prefix + _this2.count + '-' + (i + 1)
             });
+			
+			if (!labelledBy) {
+				$(panel).attr({
+					'aria-labelledby': _this2.opts.prefix + _this2.count + '-' + (i + 1)
+				});
+			}
         });
     };
 
