@@ -10,7 +10,8 @@ var defaults = {
     tab: '.tab',
     panel: '.panel',
     prefix: 'Tabs-',
-    hashEnabled: false
+    hashEnabled: false,
+    direction: 'horizontal' // other option is 'vertical'
 };
 
 var keys = {
@@ -37,12 +38,22 @@ var activateNext = function () {
 };
 
 var keyEvents = function (e, index) {
-    if (e.which === keys.left || e.which === keys.up) {
+    if (e.which === keys.left && this.opts.direction === 'horizontal') {
         e.preventDefault();
         activatePrevious.call(this, index);
         return;
     }
-    if (e.which === keys.right || e.which === keys.down) {
+    if (e.which === keys.right && this.opts.direction === 'horizontal') {
+        e.preventDefault();
+        activateNext.call(this, index);
+        return;
+    }
+    if (e.which === keys.up && this.opts.direction === 'vertical') {
+        e.preventDefault();
+        activatePrevious.call(this, index);
+        return;
+    }
+    if (e.which === keys.down && this.opts.direction === 'vertical') {
         e.preventDefault();
         activateNext.call(this, index);
         return;

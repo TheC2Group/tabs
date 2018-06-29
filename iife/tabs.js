@@ -1,7 +1,7 @@
 /*!
  * c2-tabs
  * https://github.com/TheC2Group/tabs
- * @version 2.0.0
+ * @version 2.2.2
  * @license MIT (c) The C2 Group (c2experience.com)
  */
 var Tabs = (function ($,eventHandler) { 'use strict';
@@ -13,7 +13,8 @@ var Tabs = (function ($,eventHandler) { 'use strict';
         tab: '.tab',
         panel: '.panel',
         prefix: 'Tabs-',
-        hashEnabled: false
+        hashEnabled: false,
+        direction: 'horizontal' // other option is 'vertical'
     };
 
     var keys = {
@@ -40,12 +41,22 @@ var Tabs = (function ($,eventHandler) { 'use strict';
     };
 
     var keyEvents = function keyEvents(e, index) {
-        if (e.which === keys.left || e.which === keys.up) {
+        if (e.which === keys.left && this.opts.direction === 'horizontal') {
             e.preventDefault();
             activatePrevious.call(this, index);
             return;
         }
-        if (e.which === keys.right || e.which === keys.down) {
+        if (e.which === keys.right && this.opts.direction === 'horizontal') {
+            e.preventDefault();
+            activateNext.call(this, index);
+            return;
+        }
+        if (e.which === keys.up && this.opts.direction === 'vertical') {
+            e.preventDefault();
+            activatePrevious.call(this, index);
+            return;
+        }
+        if (e.which === keys.down && this.opts.direction === 'vertical') {
             e.preventDefault();
             activateNext.call(this, index);
             return;
@@ -81,17 +92,19 @@ var Tabs = (function ($,eventHandler) { 'use strict';
     };
 
     var bindEvents = function bindEvents() {
+        var _this3 = this;
+
         var _this = this;
 
         this.$tabs.on('click', function (e) {
-            activate.call(_this, _this.$tabs.index(e.currentTarget));
+            activate.call(_this3, _this3.$tabs.index(e.currentTarget));
         });
         this.$tabs.on('keydown', function (e) {
-            keyEvents.call(_this, e);
+            keyEvents.call(_this3, e);
         });
         this.$panels.on('keydown', function (e) {
             if (!e.ctrlKey) return;
-            keyEvents.call(_this, e);
+            keyEvents.call(_this3, e);
         });
         if (this.opts.hashEnabled) {
             $(window).on('hashchange', function () {
@@ -101,42 +114,42 @@ var Tabs = (function ($,eventHandler) { 'use strict';
     };
 
     var addAriaAttributes = function addAriaAttributes() {
-        var _this2 = this;
+        var _this4 = this;
 
         if (!this.$tablist.attr('role')) {
             this.$tablist.attr('role', 'tablist');
         }
 
         this.$tabs.each(function (i, tab) {
-			var tabId = $(tab).attr('id');
-			
+            var tabId = $(tab).attr('id');
+
             $(tab).attr({
                 'role': 'tab',
-                'tabindex': i === _this2.index ? 0 : -1,
-                'aria-selected': i === _this2.index ? true : false,
+                'tabindex': i === _this4.index ? 0 : -1,
+                'aria-selected': i === _this4.index ? true : false
             });
-			
-			if (!tabId) {
-				$(tab).attr({
-					'id': _this2.opts.prefix + _this2.count + '-' + (i + 1)
-				});
-			}
+
+            if (!tabId) {
+                $(tab).attr({
+                    'id': _this4.opts.prefix + _this4.count + '-' + (i + 1)
+                });
+            }
         });
 
         this.$panels.each(function (i, panel) {
-			var labelledBy = $(panel).attr('aria-labelledby');
-			
+            var labelledBy = $(panel).attr('aria-labelledby');
+
             $(panel).attr({
                 'role': 'tabpanel',
-                'tabindex': i === _this2.index ? 0 : -1,
-                'aria-hidden': i === _this2.index ? false : true,
+                'tabindex': i === _this4.index ? 0 : -1,
+                'aria-hidden': i === _this4.index ? false : true
             });
-			
-			if (!labelledBy) {
-				$(panel).attr({
-					'aria-labelledby': _this2.opts.prefix + _this2.count + '-' + (i + 1)
-				});
-			}
+
+            if (!labelledBy) {
+                $(panel).attr({
+                    'aria-labelledby': _this4.opts.prefix + _this4.count + '-' + (i + 1)
+                });
+            }
         });
     };
 
@@ -146,7 +159,7 @@ var Tabs = (function ($,eventHandler) { 'use strict';
         if (document.location.hash) {
             // find tab with that hash
             var hashKey = document.location.hash.split('#')[1];
-            var $selectedTab = this.$tabs.filter('[data-hash="'+hashKey+'"]');
+            var $selectedTab = this.$tabs.filter('[data-hash="' + hashKey + '"]');
 
             // activate tab with that hash
             if ($selectedTab.length > 0) {
