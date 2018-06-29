@@ -108,6 +108,16 @@ var bindEvents = function () {
     }
 };
 
+var unbindEvents = function () {
+    this.$tabs.unbind('click keydown');
+
+    this.$panels.unbind('keydown');
+    
+    if (this.opts.hashEnabled) {
+        $(window).unbind('hashchange');
+    }
+};
+
 var addAriaAttributes = function () {
     if (!this.$tablist.attr('role')) {
         this.$tablist.attr('role', 'tablist');
@@ -126,7 +136,9 @@ var addAriaAttributes = function () {
 			$(tab).attr({
 				'id': this.opts.prefix + this.count + '-' + (i + 1)
 			});
-		}
+		} else {
+            $(tab).attr('data-original-id', true);
+        }
     });
 
     this.$panels.each((i, panel) => {
@@ -142,8 +154,39 @@ var addAriaAttributes = function () {
 			$(panel).attr({
 				'aria-labelledby': this.opts.prefix + this.count + '-' + (i + 1)
 			});
-		}
+		} else {
+            $(panel).attr('data-original-labelledBy', true);
+        }
     });
+};
+
+var removeAriaAttributes = function () {
+    this.$tablist.removeAttr('role');
+
+    this.$tabs.each((i, tab) => {
+        var tabId = $(tab).attr('id');
+
+        if (!$(tab).attr('data-original-id')) {
+            $(tab).removeAttr('id');
+        }
+
+        $(tab).removeAttr('role tabindex aria-selected data-original-id');
+    });
+
+    this.$panels.each((i, panel) => {
+        var labelledBy = $(panel).attr('aria-labelledby');
+
+        if (!$(panel).attr('data-original-labelledBy')) {
+            $(panel).removeAttr('aria-labelledby');
+        }
+
+        $(panel).removeAttr('role tabindex aria-hidden data-original-labelledBy');
+    });
+};
+
+var destroy = function () {
+    removeAriaAttributes.call(this);
+    unbindEvents.call(this);
 };
 
 var checkHash = function checkHash() {
@@ -187,5 +230,6 @@ eventHandler(Tabs);
 Tabs.prototype.activate = activate;
 Tabs.prototype.activateNext = activateNext;
 Tabs.prototype.activatePrevious = activatePrevious;
+Tabs.prototype.destroy = destroy;
 
 export default Tabs;

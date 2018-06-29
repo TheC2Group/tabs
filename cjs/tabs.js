@@ -110,6 +110,16 @@ var bindEvents = function bindEvents() {
     }
 };
 
+var unbindEvents = function unbindEvents() {
+    this.$tabs.unbind('click keydown');
+
+    this.$panels.unbind('keydown');
+
+    if (this.opts.hashEnabled) {
+        $(window).unbind('hashchange');
+    }
+};
+
 var addAriaAttributes = function addAriaAttributes() {
     var _this4 = this;
 
@@ -130,6 +140,8 @@ var addAriaAttributes = function addAriaAttributes() {
             $(tab).attr({
                 'id': _this4.opts.prefix + _this4.count + '-' + (i + 1)
             });
+        } else {
+            $(tab).attr('data-original-id', true);
         }
     });
 
@@ -146,8 +158,39 @@ var addAriaAttributes = function addAriaAttributes() {
             $(panel).attr({
                 'aria-labelledby': _this4.opts.prefix + _this4.count + '-' + (i + 1)
             });
+        } else {
+            $(panel).attr('data-original-labelledBy', true);
         }
     });
+};
+
+var removeAriaAttributes = function removeAriaAttributes() {
+    this.$tablist.removeAttr('role');
+
+    this.$tabs.each(function (i, tab) {
+        var tabId = $(tab).attr('id');
+
+        if (!$(tab).attr('data-original-id')) {
+            $(tab).removeAttr('id');
+        }
+
+        $(tab).removeAttr('role tabindex aria-selected data-original-id');
+    });
+
+    this.$panels.each(function (i, panel) {
+        var labelledBy = $(panel).attr('aria-labelledby');
+
+        if (!$(panel).attr('data-original-labelledBy')) {
+            $(panel).removeAttr('aria-labelledby');
+        }
+
+        $(panel).removeAttr('role tabindex aria-hidden data-original-labelledBy');
+    });
+};
+
+var destroy = function destroy() {
+    removeAriaAttributes.call(this);
+    unbindEvents.call(this);
 };
 
 var checkHash = function checkHash() {
@@ -191,5 +234,6 @@ eventHandler(Tabs);
 Tabs.prototype.activate = activate;
 Tabs.prototype.activateNext = activateNext;
 Tabs.prototype.activatePrevious = activatePrevious;
+Tabs.prototype.destroy = destroy;
 
 module.exports = Tabs;
