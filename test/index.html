@@ -74,7 +74,11 @@
             </div>
         </div>
 
-        <button class="destroy">Destroy</button>
+        <div class="Wrap">
+            <button class="destroy">Destroy Basic Tabs</button>
+            <button class="enable">Enable Basic Tabs</button>
+            <br><br><br><br>
+        </div>
 
         <div class="Wrap">
             <h3>Tabs Widget - with hashes</h3>
@@ -115,6 +119,10 @@
 
             $('button.destroy').click(function() {
                 basicTabs.destroy();
+            });
+
+            $('button.enable').click(function() {
+                basicTabs = new Tabs('#Example1');
             });
         </script>
     </body>
