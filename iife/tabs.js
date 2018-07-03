@@ -92,39 +92,38 @@ var Tabs = (function ($,eventHandler) { 'use strict';
     };
 
     var bindEvents = function bindEvents() {
-        var _this3 = this;
+        var self = this;
 
-        var _this = this;
+        self.$tabs.on('click', function (e) {
+            activate.call(self, self.$tabs.index(e.currentTarget));
+        });
 
-        this.$tabs.on('click', function (e) {
-            activate.call(_this3, _this3.$tabs.index(e.currentTarget));
+        self.$tabs.on('keydown', function (e) {
+            keyEvents.call(self, e);
         });
-        this.$tabs.on('keydown', function (e) {
-            keyEvents.call(_this3, e);
-        });
-        this.$panels.on('keydown', function (e) {
+
+        self.$panels.on('keydown', function (e) {
             if (!e.ctrlKey) return;
-            keyEvents.call(_this3, e);
+            keyEvents.call(self, e);
         });
-        if (this.opts.hashEnabled) {
-            $(window).on('hashchange', function () {
-                checkHash.call(_this);
-            });
-        }
+
+        $(window).on('hashchange', function () {
+            if (self.opts.hashEnabled && self._enabled) {
+                checkHash.call(self);
+            }
+        });
     };
 
     var unbindEvents = function unbindEvents() {
-        this.$tabs.unbind('click keydown');
+        this.$tabs.off('click keydown');
 
-        this.$panels.unbind('keydown');
+        this.$panels.off('keydown');
 
-        if (this.opts.hashEnabled) {
-            $(window).unbind('hashchange');
-        }
+        this._enabled = false;
     };
 
     var addAriaAttributes = function addAriaAttributes() {
-        var _this4 = this;
+        var _this = this;
 
         if (!this.$tablist.attr('role')) {
             this.$tablist.attr('role', 'tablist');
@@ -135,13 +134,13 @@ var Tabs = (function ($,eventHandler) { 'use strict';
 
             $(tab).attr({
                 'role': 'tab',
-                'tabindex': i === _this4.index ? 0 : -1,
-                'aria-selected': i === _this4.index ? true : false
+                'tabindex': i === _this.index ? 0 : -1,
+                'aria-selected': i === _this.index ? true : false
             });
 
             if (!tabId) {
                 $(tab).attr({
-                    'id': _this4.opts.prefix + _this4.count + '-' + (i + 1)
+                    'id': _this.opts.prefix + _this.count + '-' + (i + 1)
                 });
             } else {
                 $(tab).attr('data-original-id', true);
@@ -153,13 +152,13 @@ var Tabs = (function ($,eventHandler) { 'use strict';
 
             $(panel).attr({
                 'role': 'tabpanel',
-                'tabindex': i === _this4.index ? 0 : -1,
-                'aria-hidden': i === _this4.index ? false : true
+                'tabindex': i === _this.index ? 0 : -1,
+                'aria-hidden': i === _this.index ? false : true
             });
 
             if (!labelledBy) {
                 $(panel).attr({
-                    'aria-labelledby': _this4.opts.prefix + _this4.count + '-' + (i + 1)
+                    'aria-labelledby': _this.opts.prefix + _this.count + '-' + (i + 1)
                 });
             } else {
                 $(panel).attr('data-original-labelledBy', true);
@@ -197,16 +196,16 @@ var Tabs = (function ($,eventHandler) { 'use strict';
     };
 
     var checkHash = function checkHash() {
-        var _this2 = this;
+        var self = this;
 
         if (document.location.hash) {
             // find tab with that hash
             var hashKey = document.location.hash.split('#')[1];
-            var $selectedTab = this.$tabs.filter('[data-hash="' + hashKey + '"]');
+            var $selectedTab = self.$tabs.filter('[data-hash="' + hashKey + '"]');
 
             // activate tab with that hash
             if ($selectedTab.length > 0) {
-                activate.call(_this2, $selectedTab.index());
+                activate.call(self, $selectedTab.index());
             }
         }
     };
@@ -221,6 +220,7 @@ var Tabs = (function ($,eventHandler) { 'use strict';
         this.$tablist = this.$el.find(this.opts.tablist);
         this.$tabs = this.$el.find(this.opts.tab);
         this.$panels = this.$el.find(this.opts.panel);
+        this._enabled = true;
 
         this.len = this.$tabs.length;
         this.index = 0;

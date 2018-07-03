@@ -89,33 +89,34 @@ var activate = function (index) {
 };
 
 var bindEvents = function () {
-    var _this = this;
+    var self = this;
 
-    this.$tabs.on('click', e => {
-        activate.call(this, this.$tabs.index(e.currentTarget));
+    self.$tabs.on('click', e => {
+        activate.call(self, self.$tabs.index(e.currentTarget));
     });
-    this.$tabs.on('keydown', e => {
-        keyEvents.call(this, e);
+
+    self.$tabs.on('keydown', e => {
+        keyEvents.call(self, e);
     });
-    this.$panels.on('keydown', e => {
+
+    self.$panels.on('keydown', e => {
         if (!e.ctrlKey) return;
-        keyEvents.call(this, e);
+        keyEvents.call(self, e);
     });
-    if (this.opts.hashEnabled) {
-        $(window).on('hashchange', function () {
-            checkHash.call(_this);
-        });
-    }
+    
+    $(window).on('hashchange', function () {
+        if (self.opts.hashEnabled && self._enabled) {
+            checkHash.call(self);
+        }
+    });
 };
 
 var unbindEvents = function () {
-    this.$tabs.unbind('click keydown');
+    this.$tabs.off('click keydown');
 
-    this.$panels.unbind('keydown');
-    
-    if (this.opts.hashEnabled) {
-        $(window).unbind('hashchange');
-    }
+    this.$panels.off('keydown');
+
+    this._enabled = false;
 };
 
 var addAriaAttributes = function () {
@@ -190,16 +191,16 @@ var destroy = function () {
 };
 
 var checkHash = function checkHash() {
-    var _this2 = this;
+    var self = this;
 
     if (document.location.hash) {
         // find tab with that hash
         var hashKey = document.location.hash.split('#')[1];
-        var $selectedTab = this.$tabs.filter('[data-hash="'+hashKey+'"]');
+        var $selectedTab = self.$tabs.filter('[data-hash="'+hashKey+'"]');
 
         // activate tab with that hash
         if ($selectedTab.length > 0) {
-            activate.call(_this2, $selectedTab.index());
+            activate.call(self, $selectedTab.index());
         }
     }
 };
@@ -214,6 +215,7 @@ var Tabs = function (el, options) {
     this.$tablist = this.$el.find(this.opts.tablist);
     this.$tabs = this.$el.find(this.opts.tab);
     this.$panels = this.$el.find(this.opts.panel);
+    this._enabled = true;
 
     this.len = this.$tabs.length;
     this.index = 0;
