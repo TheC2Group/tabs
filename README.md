@@ -50,6 +50,7 @@ tabs.on('update', i => {
 tabs.activate(0); // activates tab with a specific index
 tabs.activateNext();
 tabs.activatePrevious();
+tabs.destroy();
 ```
 
 

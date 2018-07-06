@@ -10,7 +10,8 @@ var defaults = {
     tab: '.tab',
     panel: '.panel',
     prefix: 'Tabs-',
-    hashEnabled: false
+    hashEnabled: false,
+    direction: 'horizontal' // other option is 'vertical'
 };
 
 var keys = {
@@ -37,12 +38,22 @@ var activateNext = function () {
 };
 
 var keyEvents = function (e, index) {
-    if (e.which === keys.left || e.which === keys.up) {
+    if (e.which === keys.left && this.opts.direction === 'horizontal') {
         e.preventDefault();
         activatePrevious.call(this, index);
         return;
     }
-    if (e.which === keys.right || e.which === keys.down) {
+    if (e.which === keys.right && this.opts.direction === 'horizontal') {
+        e.preventDefault();
+        activateNext.call(this, index);
+        return;
+    }
+    if (e.which === keys.up && this.opts.direction === 'vertical') {
+        e.preventDefault();
+        activatePrevious.call(this, index);
+        return;
+    }
+    if (e.which === keys.down && this.opts.direction === 'vertical') {
         e.preventDefault();
         activateNext.call(this, index);
         return;
@@ -78,23 +89,34 @@ var activate = function (index) {
 };
 
 var bindEvents = function () {
-    var _this = this;
+    var self = this;
 
-    this.$tabs.on('click', e => {
-        activate.call(this, this.$tabs.index(e.currentTarget));
+    self.$tabs.on('click', e => {
+        activate.call(self, self.$tabs.index(e.currentTarget));
     });
-    this.$tabs.on('keydown', e => {
-        keyEvents.call(this, e);
+
+    self.$tabs.on('keydown', e => {
+        keyEvents.call(self, e);
     });
-    this.$panels.on('keydown', e => {
+
+    self.$panels.on('keydown', e => {
         if (!e.ctrlKey) return;
-        keyEvents.call(this, e);
+        keyEvents.call(self, e);
     });
-    if (this.opts.hashEnabled) {
-        $(window).on('hashchange', function () {
-            checkHash.call(_this);
-        });
-    }
+    
+    $(window).on('hashchange', function () {
+        if (self.opts.hashEnabled && self._enabled) {
+            checkHash.call(self);
+        }
+    });
+};
+
+var unbindEvents = function () {
+    this.$tabs.off('click keydown');
+
+    this.$panels.off('keydown');
+
+    this._enabled = false;
 };
 
 var addAriaAttributes = function () {
@@ -115,7 +137,9 @@ var addAriaAttributes = function () {
 			$(tab).attr({
 				'id': this.opts.prefix + this.count + '-' + (i + 1)
 			});
-		}
+		} else {
+            $(tab).attr('data-original-id', true);
+        }
     });
 
     this.$panels.each((i, panel) => {
@@ -131,21 +155,52 @@ var addAriaAttributes = function () {
 			$(panel).attr({
 				'aria-labelledby': this.opts.prefix + this.count + '-' + (i + 1)
 			});
-		}
+		} else {
+            $(panel).attr('data-original-labelledBy', true);
+        }
     });
 };
 
+var removeAriaAttributes = function () {
+    this.$tablist.removeAttr('role');
+
+    this.$tabs.each((i, tab) => {
+        var tabId = $(tab).attr('id');
+
+        if (!$(tab).attr('data-original-id')) {
+            $(tab).removeAttr('id');
+        }
+
+        $(tab).removeAttr('role tabindex aria-selected data-original-id');
+    });
+
+    this.$panels.each((i, panel) => {
+        var labelledBy = $(panel).attr('aria-labelledby');
+
+        if (!$(panel).attr('data-original-labelledBy')) {
+            $(panel).removeAttr('aria-labelledby');
+        }
+
+        $(panel).removeAttr('role tabindex aria-hidden data-original-labelledBy');
+    });
+};
+
+var destroy = function () {
+    removeAriaAttributes.call(this);
+    unbindEvents.call(this);
+};
+
 var checkHash = function checkHash() {
-    var _this2 = this;
+    var self = this;
 
     if (document.location.hash) {
         // find tab with that hash
         var hashKey = document.location.hash.split('#')[1];
-        var $selectedTab = this.$tabs.filter('[data-hash="'+hashKey+'"]');
+        var $selectedTab = self.$tabs.filter('[data-hash="'+hashKey+'"]');
 
         // activate tab with that hash
         if ($selectedTab.length > 0) {
-            activate.call(_this2, $selectedTab.index());
+            activate.call(self, $selectedTab.index());
         }
     }
 };
@@ -160,6 +215,7 @@ var Tabs = function (el, options) {
     this.$tablist = this.$el.find(this.opts.tablist);
     this.$tabs = this.$el.find(this.opts.tab);
     this.$panels = this.$el.find(this.opts.panel);
+    this._enabled = true;
 
     this.len = this.$tabs.length;
     this.index = 0;
@@ -176,5 +232,6 @@ eventHandler(Tabs);
 Tabs.prototype.activate = activate;
 Tabs.prototype.activateNext = activateNext;
 Tabs.prototype.activatePrevious = activatePrevious;
+Tabs.prototype.destroy = destroy;
 
 export default Tabs;
