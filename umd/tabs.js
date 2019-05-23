@@ -1,7 +1,7 @@
 /*!
  * c2-tabs
  * https://github.com/TheC2Group/tabs
- * @version 2.2.2
+ * @version 2.2.4
  * @license MIT (c) The C2 Group (c2experience.com)
  */
 (function (global, factory) {

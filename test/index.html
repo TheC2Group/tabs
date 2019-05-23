@@ -5,48 +5,7 @@
         <title>Tab Panel Widget</title>
         <meta name="viewport" content="initial-scale=1">
         <link rel="stylesheet" href="../tabs.css">
-        <style>
-            body {
-                margin: 50px;
-                font-family: sans-serif;
-            }
-
-            .Wrap {
-                margin: 0 auto;
-                max-width: 1200px;
-            }
-
-            .Tabs {
-                margin: 0 0 50px;
-            }
-
-            .Tabs .tab {
-                padding: 10px;
-                margin-right: 5px;
-                border-top: 1px solid black;
-                border-left: 1px solid black;
-                border-right: 1px solid black;
-                border-top-left-radius: 5px;
-                border-top-right-radius: 5px;
-                cursor: pointer;
-            }
-
-            .Tabs .tab[aria-selected="true"] {
-                background: #ccc;
-                color: #000;
-            }
-
-            .Tabs .tab:focus {
-                background: #bbb;
-            }
-
-            .Tabs .panel {
-                padding: 10px 20px;
-                background: #eee;
-                border: 1px solid black;
-            }
-
-        </style>
+        <link rel="stylesheet" href="./css/index.css">
     </head>
     <body>
 
@@ -104,26 +63,6 @@
             </div>
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
-        <script src="event-handler.js"></script>
-        <script src="../iife/tabs.js"></script>
-
-        <script>
-            var basicTabs = new Tabs('#Example1');
-            basicTabs.on('update', function (i) {
-                console.log(i);
-            });
-            var hashTabs = new Tabs('#Example2', {
-                hashEnabled: true
-            });
-
-            $('button.destroy').click(function() {
-                basicTabs.destroy();
-            });
-
-            $('button.enable').click(function() {
-                basicTabs = new Tabs('#Example1');
-            });
-        </script>
+        <script src="./bundle/index.js"></script>
     </body>
 </html>
