@@ -1,7 +1,7 @@
 'use strict';
 
-import * as $ from 'jquery';
-import * as eventHandler from 'c2-event-handler';
+import $ from 'jquery';
+import eventHandler from 'c2-event-handler';
 
 var count = 0;
 
@@ -103,7 +103,7 @@ var bindEvents = function () {
         if (!e.ctrlKey) return;
         keyEvents.call(self, e);
     });
-    
+
     $(window).on('hashchange', function () {
         if (self.opts.hashEnabled && self._enabled) {
             checkHash.call(self);
@@ -126,13 +126,13 @@ var addAriaAttributes = function () {
 
     this.$tabs.each((i, tab) => {
 		var tabId = $(tab).attr('id');
-		
+
         $(tab).attr({
             'role': 'tab',
             'tabindex': (i === this.index) ? 0 : -1,
             'aria-selected': (i === this.index) ? true : false,
         });
-		
+
 		if (!tabId) {
 			$(tab).attr({
 				'id': this.opts.prefix + this.count + '-' + (i + 1)
@@ -144,13 +144,13 @@ var addAriaAttributes = function () {
 
     this.$panels.each((i, panel) => {
 		var labelledBy = $(panel).attr('aria-labelledby');
-		
+
         $(panel).attr({
             'role': 'tabpanel',
             'tabindex': (i === this.index) ? 0 : -1,
             'aria-hidden': (i === this.index) ? false : true,
         });
-		
+
 		if (!labelledBy) {
 			$(panel).attr({
 				'aria-labelledby': this.opts.prefix + this.count + '-' + (i + 1)
