@@ -11,7 +11,8 @@ var defaults = {
     panel: '.panel',
     prefix: 'Tabs-',
     hashEnabled: false,
-    direction: 'horizontal' // other option is 'vertical'
+    direction: 'horizontal', // other option is 'vertical'
+    firstOpen: 0 // tab you want open on page load
 };
 
 var keys = {
@@ -218,7 +219,7 @@ var Tabs = function (el, options) {
     this._enabled = true;
 
     this.len = this.$tabs.length;
-    this.index = 0;
+    this.index = this.opts.firstOpen;
 
     addAriaAttributes.call(this);
     bindEvents.call(this);

@@ -5,8 +5,10 @@ var basicTabs = new Tabs('#Example1');
 basicTabs.on('update', function (i) {
     console.log(i);
 });
+
 var hashTabs = new Tabs('#Example2', {
-    hashEnabled: true
+    hashEnabled: true,
+    firstOpen: 2
 });
 
 $('button.destroy').click(function() {

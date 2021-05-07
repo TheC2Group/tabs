@@ -35,6 +35,7 @@ Options
 | panel | string | '.panel' | refers to the selector on the tab panels |
 | prefix | string | 'Tabs-' | sets the prefix for the aria label |
 | hashEnabled | boolean | false | activates tabs based on URL hash (also requires 'data-hash' attribute on each tab) |
+| firstOpen | number | 0 | tab you want open on page load
 
 
 API
